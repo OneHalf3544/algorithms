@@ -1,13 +1,16 @@
 package ru.onehalf.algorithms.treemap;
 
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Date: 06.11.2017
  *
  * @author OneHalf
  */
-class Node<K, V> {
+class Node<K, V> implements Iterable<Map.Entry<K, V>> {
 
     private Node<K, V> min;
     private Node<K, V> max;
@@ -22,7 +25,7 @@ class Node<K, V> {
         this.comparator = comparator;
     }
 
-    public V put(Node<K, V> node) {
+    V put(Node<K, V> node) {
         if (this.equals(node)) {
             V oldValue = value;
             value = node.value;
@@ -30,18 +33,18 @@ class Node<K, V> {
         }
 
         if (node.greaterThan(this)) {
-            if (max == null) {
-                max = node;
+            if (getMax() == null) {
+                setMax(node);
                 return null;
             } else {
-                return max.put(node);
+                return getMax().put(node);
             }
         } else {
-            if (min == null) {
-                min = node;
+            if (getMin() == null) {
+                setMin(node);
                 return null;
             } else {
-                return min.put(node);
+                return getMin().put(node);
             }
         }
     }
@@ -55,10 +58,73 @@ class Node<K, V> {
     }
 
     K maxKey() {
-        return max == null ? key : max.maxKey();
+        return getMax() == null ? key : getMax().maxKey();
     }
 
     K minKey() {
-        return min == null ? key : min.minKey();
+        return getMin() == null ? key : getMin().minKey();
+    }
+
+    Map.Entry<K, V> toEntry() {
+        return Map.entry(key, value);
+    }
+
+    @Override
+    public Iterator<Map.Entry<K, V>> iterator() {
+        return new NodeIterator<>(this);
+    }
+
+    Node<K, V> getMin() {
+        return min;
+    }
+
+    void setMin(Node<K, V> min) {
+        this.min = min;
+    }
+
+    Node<K, V> getMax() {
+        return max;
+    }
+
+    void setMax(Node<K, V> max) {
+        this.max = max;
+    }
+
+    private static class NodeIterator<K, V> implements Iterator<Map.Entry<K, V>> {
+
+        enum CurrentPart {
+            MIN, THIS, MAX
+        }
+
+        private final Node<K, V> node;
+        private CurrentPart currentStage;
+        private Iterator<Map.Entry<K, V>> subIterator;
+
+        NodeIterator(Node<K, V> node) {
+            this.node = node;
+            currentStage = CurrentPart.MIN;
+            subIterator = node.getMin() == null ? null : node.getMin().iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return currentStage == CurrentPart.MIN
+                    || (subIterator != null && subIterator.hasNext());
+        }
+
+        @Override
+        public Map.Entry<K, V> next() {
+            if (subIterator != null && subIterator.hasNext()) {
+                return subIterator.next();
+            } else {
+                if (currentStage == CurrentPart.MIN) {
+                    currentStage = CurrentPart.THIS;
+                    subIterator = node.max == null ? null : node.max.iterator();
+                    return node.toEntry();
+
+                }
+            }
+            throw new NoSuchElementException();
+        }
     }
 }

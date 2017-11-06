@@ -13,20 +13,32 @@ import java.util.*;
  */
 public class SimpleSet<E> implements Set<E> {
 
-    @SafeVarargs
-    public static <E> SimpleSet<E> of(E... array) {
-        return new SimpleSet<>(array);
+    /**
+     * Create a Set from unique values.
+     * For optimisation, it doesn't check uniqueness of values.
+     *
+     * @param iterable values for Set
+     * @param <E> elements type
+     * @return created set
+     */
+    public static <E> SimpleSet<E> ofUniqueValues(int size, Iterable<E> iterable) {
+        Iterator<E> iterator = iterable.iterator();
+        Object[] array = new Object[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = iterator.next();
+        }
+        return new SimpleSet<E>((E[])array);
     }
 
-    private final Object[] array;
+    @SafeVarargs
+    public static <E> SimpleSet<E> of(E... values) {
+        E[] array = removeDuplicates(values);
 
-    public SimpleSet() {
-        this((E[])new Object[0]);
+        return new SimpleSet<E>((E[]) array);
     }
 
-    @SafeVarargs
-    private SimpleSet(E... values) {
-        Object[] array = values.clone();
+    private static <E> E[] removeDuplicates(E[] values) {
+        E[] array = values.clone();
         int size = array.length;
         for (int i = 0; i < size; i++) {
             for (int j = i + 1; j < size; j++) {
@@ -38,10 +50,21 @@ public class SimpleSet<E> implements Set<E> {
 
             }
         }
-        if (size != array.length) {
-            array = Arrays.copyOf(array, size);
+        if (size == array.length) {
+            return array;
         }
-        this.array = array;
+        return (E[]) Arrays.copyOf(array, size, values.getClass());
+    }
+
+    private final E[] array;
+
+    public SimpleSet() {
+        this((E[])new Object[0]);
+    }
+
+    @SafeVarargs
+    private SimpleSet(E... uniqeValues) {
+        array = uniqeValues;
     }
 
     @Override

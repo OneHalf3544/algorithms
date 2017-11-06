@@ -170,11 +170,7 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
             return null;
         }
         String substring = ((String) key).substring(3);
-        try {
-            return (Integer.parseInt(substring) <= size) ? (V) "value" : null;
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return (Integer.parseInt(substring) <= size) ? (V) "value" : null;
     }
 
     @Override
@@ -209,6 +205,7 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
     @Override
     public void clear() {
         size = 0;
+        root = null;
     }
 
     @Override
@@ -231,11 +228,10 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        Map.Entry<K, V>[] entries = new Map.Entry[size];
-        for (int i = 0; i < size; i++) {
-            entries[i] = Map.entry((K) ("key" + (i + 1)), (V) "value");
+        if (isEmpty()) {
+            return Collections.emptySet();
         }
-        return SimpleSet.of(entries);
+        return SimpleSet.ofUniqueValues(size, root);
 
     }
 }

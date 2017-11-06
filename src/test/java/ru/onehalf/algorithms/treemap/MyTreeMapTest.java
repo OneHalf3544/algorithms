@@ -95,20 +95,20 @@ class MyTreeMapTest {
 
     @Test
     void should_returnMaxKey_when_callLastKey() {
-        MyTreeMap<String, String> map = new MyTreeMap<>();
-        map.put("key1", "value");
-        map.put("key2", "value");
-        map.put("key3", "value");
+        MyTreeMap<Integer, String> map = new MyTreeMap<>();
+        map.put(1, "value");
+        map.put(2, "value");
+        map.put(3, "value");
 
-        assertEquals("key3", map.lastKey(), "lastKey");
+        assertEquals(3, map.lastKey().intValue(), "lastKey");
     }
 
     @Test
     void should_containsMethodWorkProperly() {
         Map<String, String> map = new MyTreeMap<>();
         map.put("key1", "value");
-        map.put("key2", "value");
         map.put("key3", "value");
+        map.put("key2", "value");
 
         assertTrue(map.containsKey("key2"));
         assertFalse(map.containsKey("wrongKey"));
@@ -131,9 +131,9 @@ class MyTreeMapTest {
         Map<String, String> map = new MyTreeMap<>();
 
         Map<String, String> map2 = new MyTreeMap<>();
-        map2.put("key1", "value");
-        map2.put("key2", "value");
         map2.put("key3", "value");
+        map2.put("key2", "value");
+        map2.put("key1", "value");
 
         map.putAll(map2);
 
