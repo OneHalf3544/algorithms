@@ -1,10 +1,22 @@
-package ru.onehalf.algorithms;
+package ru.onehalf.algorithms.treemap;
+
+import ru.onehalf.algorithms.SimpleSet;
 
 import java.util.*;
 
 public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
+    private Comparator<? super K> comparator;
     private int size  = 0;
+    private Node<K, V> root;
+
+    public MyTreeMap() {
+        this.comparator = (o1, o2) -> ((Comparable<K>) o1).compareTo(o2);;
+    }
+
+    public MyTreeMap(Comparator<? super K> comparator) {
+        this.comparator = comparator;
+    }
 
     @Override
     public Entry<K, V> lowerEntry(K key) {
@@ -98,7 +110,7 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public Comparator<? super K> comparator() {
-        throw new UnsupportedOperationException("Not supported yet");
+        return comparator;
     }
 
     @Override
@@ -121,7 +133,7 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
         if (isEmpty()) {
             return null;
         }
-        return (K) "key1";
+        return root.minKey();
     }
 
     @Override
@@ -129,7 +141,7 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
         if (isEmpty()) {
             return null;
         }
-        return (K) ("key" + size());
+        return root.maxKey();
     }
 
     @Override
@@ -139,7 +151,7 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public boolean isEmpty() {
-        return size == 0;
+        return size() == 0;
     }
 
     @Override
@@ -167,8 +179,18 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public V put(K key, V value) {
-        size++;
-        return null;
+        Node<K, V> node = new Node<>(key, value, comparator());
+
+        if (isEmpty()) {
+            this.root = node;
+            size++;
+            return null;
+        }
+        V oldValue = root.put(node);
+        if (oldValue == null) {
+            size++;
+        }
+        return oldValue;
     }
 
     @Override

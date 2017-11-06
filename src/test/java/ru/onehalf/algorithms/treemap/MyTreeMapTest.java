@@ -1,8 +1,8 @@
-package ru.onehalf.algorithms;
+package ru.onehalf.algorithms.treemap;
 
 import org.hamcrest.collection.IsIterableContainingInOrder;
-import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
+import ru.onehalf.algorithms.treemap.MyTreeMap;
 
 import java.util.*;
 
@@ -79,11 +79,12 @@ class MyTreeMapTest {
                         Map.entry("key2", "value"),
                         Map.entry("key3", "value")
                 )),
-                () ->  assertThat(map.keySet(), IsIterableContainingInOrder.contains("key1", "key2", "key3"))
+                () ->  assertThat(map.keySet(), IsIterableContainingInOrder.contains("key1", "key2", "key3")),
+                () ->  assertThat(map, aMapWithSize(3))
         );
     }
     @Test
-    void should_returnMinKey_when_callLastKey() {
+    void should_returnMinKey_when_callFirstKey() {
         MyTreeMap<String, String> map = new MyTreeMap<>();
         map.put("key1", "value");
         map.put("key2", "value");
@@ -91,6 +92,7 @@ class MyTreeMapTest {
 
         assertEquals("key1", map.firstKey(), "firstKey");
     }
+
     @Test
     void should_returnMaxKey_when_callLastKey() {
         MyTreeMap<String, String> map = new MyTreeMap<>();
