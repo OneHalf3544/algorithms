@@ -4,9 +4,7 @@ import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -42,6 +40,7 @@ class MyTreeMapTest {
         map.put("key1", "value");
 
         assertAll("map contains entry(key, value)",
+                () -> assertFalse(map.isEmpty(), "isEmpty"),
                 () -> assertThat(map, hasEntry("key1", "value")),
                 () -> assertThat(map, hasKey("key1")),
                 () -> assertThat(map, hasValue("value")),
@@ -82,5 +81,84 @@ class MyTreeMapTest {
                 )),
                 () ->  assertThat(map.keySet(), IsIterableContainingInOrder.contains("key1", "key2", "key3"))
         );
+    }
+    @Test
+    void should_returnMinKey_when_callLastKey() {
+        MyTreeMap<String, String> map = new MyTreeMap<>();
+        map.put("key1", "value");
+        map.put("key2", "value");
+        map.put("key3", "value");
+
+        assertEquals("key1", map.firstKey(), "firstKey");
+    }
+    @Test
+    void should_returnMaxKey_when_callLastKey() {
+        MyTreeMap<String, String> map = new MyTreeMap<>();
+        map.put("key1", "value");
+        map.put("key2", "value");
+        map.put("key3", "value");
+
+        assertEquals("key3", map.lastKey(), "lastKey");
+    }
+
+    @Test
+    void should_containsMethodWorkProperly() {
+        Map<String, String> map = new MyTreeMap<>();
+        map.put("key1", "value");
+        map.put("key2", "value");
+        map.put("key3", "value");
+
+        assertTrue(map.containsKey("key2"));
+        assertFalse(map.containsKey("wrongKey"));
+    }
+
+    @Test
+    void should_clearMap() {
+        Map<String, String> map = new MyTreeMap<>();
+        map.put("key1", "value");
+        map.put("key2", "value");
+        map.put("key3", "value");
+
+        map.clear();
+
+        assertThat(map, anEmptyMap());
+    }
+
+    @Test
+    void should_putAllValues() {
+        Map<String, String> map = new MyTreeMap<>();
+
+        Map<String, String> map2 = new MyTreeMap<>();
+        map2.put("key1", "value");
+        map2.put("key2", "value");
+        map2.put("key3", "value");
+
+        map.putAll(map2);
+
+        assertAll("contains all entries",
+                () -> assertEquals("value", map.get("key1")),
+                () -> assertEquals("value", map.get("key2")),
+                () -> assertEquals("value", map.get("key3"))
+        );
+    }
+
+    @Test
+    void should_removeEntryByKey() {
+        Map<String, String> map = new MyTreeMap<>();
+        map.put("key1", "value");
+        map.put("key2", "value");
+        map.put("key3", "value");
+
+        String removedValue = map.remove("key3");
+        assertEquals("value", removedValue);
+        assertFalse(map.containsKey("key3"));
+    }
+
+    @Test
+    void should_sayIsValuePresentInAMap() {
+        Map<String, String> map = new MyTreeMap<>();
+        assertFalse(map.containsValue("value"));
+        map.put("key1", "value");
+        assertTrue(map.containsValue("value"));
     }
 }

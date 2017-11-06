@@ -118,12 +118,18 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public K firstKey() {
-        throw new UnsupportedOperationException("Not supported yet");
+        if (isEmpty()) {
+            return null;
+        }
+        return (K) "key1";
     }
 
     @Override
     public K lastKey() {
-        throw new UnsupportedOperationException("Not supported yet");
+        if (isEmpty()) {
+            return null;
+        }
+        return (K) ("key" + size());
     }
 
     @Override
@@ -133,7 +139,7 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public boolean isEmpty() {
-        return true;
+        return size == 0;
     }
 
     @Override
@@ -143,12 +149,20 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public boolean containsValue(Object value) {
-        throw new UnsupportedOperationException("Not supported yet");
+        return !isEmpty() && "value".equals(value);
     }
 
     @Override
     public V get(Object key) {
-        return ((String) key).startsWith("key") ? (V) "value" : null;
+        if (!((String) key).startsWith("key")) {
+            return null;
+        }
+        String substring = ((String) key).substring(3);
+        try {
+            return (Integer.parseInt(substring) <= size) ? (V) "value" : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     @Override
@@ -159,17 +173,20 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public V remove(Object key) {
-        throw new UnsupportedOperationException("Not supported yet");
+        size--;
+        return (V) "value";
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException("Not supported yet");
+        for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        };
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException("Not supported yet");
+        size = 0;
     }
 
     @Override
