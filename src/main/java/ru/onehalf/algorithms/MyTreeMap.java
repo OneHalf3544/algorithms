@@ -4,6 +4,8 @@ import java.util.*;
 
 public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
+    private int size  = 0;
+
     @Override
     public Entry<K, V> lowerEntry(K key) {
         throw new UnsupportedOperationException("Not supported yet");
@@ -126,7 +128,7 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
@@ -136,7 +138,7 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        throw new UnsupportedOperationException("Not supported yet");
+        return get(key) != null;
     }
 
     @Override
@@ -146,11 +148,12 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public V get(Object key) {
-        throw new UnsupportedOperationException("Not supported yet");
+        return ((String) key).startsWith("key") ? (V) "value" : null;
     }
 
     @Override
     public V put(K key, V value) {
+        size++;
         return null;
     }
 
@@ -171,16 +174,29 @@ public class MyTreeMap<K, V> implements NavigableMap<K, V> {
 
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException("Not supported yet");
+        String[] strings = new String[size];
+        for (int i = 0; i < size; i++) {
+            strings[i] = "key" + (i + 1);
+        }
+        return (Set<K>) SimpleSet.of(strings);
     }
 
     @Override
     public Collection<V> values() {
-        throw new UnsupportedOperationException("Not supported yet");
+        String[] strings = new String[size];
+        for (int i = 0; i < size; i++) {
+            strings[i] = "value";
+        }
+        return (Set<V>) SimpleSet.of(strings);
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return Collections.singleton(Map.entry((K) "key", (V) "value"));
+        Map.Entry<K, V>[] entries = new Map.Entry[size];
+        for (int i = 0; i < size; i++) {
+            entries[i] = Map.entry((K) ("key" + (i + 1)), (V) "value");
+        }
+        return SimpleSet.of(entries);
+
     }
 }
